@@ -60,7 +60,12 @@ router.post('/login', async (req, res) => {
             throw new Error('Invalid credentials');
         }
 
-        res.status(200).json({ success: true, message: "Logged-In Successfully" });
+        res.status(200).json({
+            success: true, message: "Logged-In Successfully", user: {
+                ...user._doc,
+                password: undefined,
+            },
+        });
 
 
     } catch (error) {
@@ -70,51 +75,73 @@ router.post('/login', async (req, res) => {
     }
 });
 
-
 router.post('/upload', async (req, res) => {
-  try {
-    const { image, ...otherData } = req.body; 
+    try {
+        const { userId, image } = req.body;
 
-    let updatedData = { ...otherData };
-
-    if (image) {
-      
-      if (image.startsWith("data:image")) {
-        try {
-          
-          const uploadResponse = await cloudinary.uploader.upload(image, {
-            folder: "prescriptions",
-          });
-
-          
-          updatedData.image = uploadResponse.secure_url;
-        } catch (uploadError) {
-          console.error("Error uploading image:", uploadError);
-
-          return res.status(400).json({
-            success: false,
-            message: "Error uploading image to Cloudinary.",
-          });
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: "User ID is required.",
+            });
         }
-      }
+
+        if (!image || !image.startsWith("data:image")) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid image format or no image provided.",
+            });
+        }
+
+
+        let uploadedImageUrl;
+        try {
+            const uploadResponse = await cloudinary.uploader.upload(image, {
+                folder: "prescriptions",
+            });
+            uploadedImageUrl = uploadResponse.secure_url;
+        } catch (uploadError) {
+            console.error("Error uploading to Cloudinary:", uploadError);
+            return res.status(500).json({
+                success: false,
+                message: "Failed to upload image to Cloudinary.",
+            });
+        }
+
+
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userId,
+            {
+                $push: {
+                    prescriptions: {
+                        photoUrl: uploadedImageUrl,
+                    },
+                },
+            },
+            { new: true }
+        );
+
+        if (!updatedUser) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found.",
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "Prescription uploaded successfully.",
+            user: updatedUser,
+        });
+    } catch (error) {
+        console.error("Server error:", error);
+        res.status(500).json({
+            success: false,
+            message: "Server error. Please try again.",
+        });
     }
-
-    
-    const updatedUser = await User.findByIdAndUpdate(req.user.id, updatedData, { new: true });
-
-    res.status(200).json({
-      success: true,
-      message: "User updated successfully.",
-      user: updatedUser,
-    });
-  } catch (error) {
-    console.error("Server error:", error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server error, please try again.",
-    });
-  }
 });
 
 export default router;
+
+

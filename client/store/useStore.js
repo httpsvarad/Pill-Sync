@@ -24,7 +24,7 @@ const useStore = create((set) => ({
         set({ loading: true, message: null });
         try {
             const response = await axios.post(`${BASE_URL}/login`, { email, password });
-            set({ user: response.data, loading: false });
+            set({ user: response.data.user, loading: false });
 
         } catch (error) {
             set({ message: "Invalid Credentials", loading: false });
