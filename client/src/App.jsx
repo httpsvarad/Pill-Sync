@@ -5,6 +5,7 @@ import SignUpPage from '../pages/SignUpPage'
 import Home from '../pages/Home'
 import Medicines from '../pages/Medicines'
 
+
 const App = () => {
   return (
     <div>
@@ -13,6 +14,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<SignUpPage />} />
+      
       </Routes>
     </div>
   )

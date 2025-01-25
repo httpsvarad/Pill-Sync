@@ -7,7 +7,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const router = express.Router();
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY); 
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 router.post('/signup', async (req, res) => {
@@ -79,6 +79,93 @@ router.post('/login', async (req, res) => {
     }
 });
 
+// router.post('/upload', async (req, res) => {
+//     try {
+//         const { userId, image } = req.body;
+
+//         if (!userId) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "User ID is required.",
+//             });
+//         }
+
+//         if (!image || !image.startsWith("data:image")) {
+//             return res.status(400).json({
+//                 success: false,
+//                 message: "Invalid image format or no image provided.",
+//             });
+//         }
+
+
+//         let uploadedImageUrl;
+//         try {
+//             const uploadResponse = await cloudinary.uploader.upload(image, {
+//                 folder: "prescriptions",
+//             });
+//             uploadedImageUrl = uploadResponse.secure_url;
+//         } catch (uploadError) {
+//             console.error("Error uploading to Cloudinary:", uploadError);
+//             return res.status(500).json({
+//                 success: false,
+//                 message: "Failed to upload image to Cloudinary.",
+//             });
+//         }
+
+
+//         const updatedUser = await userModel.findByIdAndUpdate(
+//             userId,
+//             {
+//                 $push: {
+//                     prescriptions: {
+//                         photoUrl: uploadedImageUrl,
+//                     },
+//                 },
+//             },
+//             { new: true }
+//         );
+
+
+//         let aiResponseText;
+//         try {
+//             const prompt = "Please extract the medicine names, dosages, schedules (morning, afternoon, or night), and durations from the provided prescription. Present the data in a strict JSON format with the following fields: name, dosage, schedule (morning, afternoon, or evening), and duration. The dosage schedule is represented as follows: 1-0-1 indicates one dose in the morning and one at night, 1-0-0 means one dose in the morning and one at night, 0-0-1 signifies one dose at night only, and 1-1-1 means one dose in the morning, afternoon, and night.Give data in restAPI response format";
+
+//             const imagePart = {
+//                 inlineData: {
+//                     data: image.split(",")[1],
+//                     mimeType: "image/png",
+//                 },
+//             };
+//             const result = await model.generateContent([prompt, imagePart]);
+//             aiResponseText = result.response.text();
+//             console.log(aiResponseText);
+//         } catch (aiError) {
+//             console.error("Error processing image with Gemini API:", aiError);
+//             return res.status(500).json({ success: false, message: "Failed to process image with AI." });
+//         }
+
+//         if (!updatedUser) {
+//             return res.status(404).json({
+//                 success: false,
+//                 message: "User not found.",
+//             });
+//         }
+
+//         res.status(200).json({
+//             success: true,
+//             message: "Prescription uploaded successfully.",
+//             user: updatedUser,
+//             aiResponseText,
+//         });
+//     } catch (error) {
+//         console.error("Server error:", error);
+//         res.status(500).json({
+//             success: false,
+//             message: "Server error. Please try again.",
+//         });
+//     }
+// });
+
 router.post('/upload', async (req, res) => {
     try {
         const { userId, image } = req.body;
@@ -97,7 +184,7 @@ router.post('/upload', async (req, res) => {
             });
         }
 
-
+        // Upload image to Cloudinary
         let uploadedImageUrl;
         try {
             const uploadResponse = await cloudinary.uploader.upload(image, {
@@ -112,36 +199,38 @@ router.post('/upload', async (req, res) => {
             });
         }
 
+        // Extract medication data using the Gemini API
+        let medications;
+        try {
+            const prompt = "Please extract the medicine names, dosages, schedules (morning, afternoon, or night), and durations from the provided prescription. Present the data in strict JSON format with the following fields: name, dosage, schedule (morning, afternoon, or evening), and duration. DONT USE BACKTICKS FOR JSON BLOCK INDICATORS";
 
+            const imagePart = {
+                inlineData: {
+                    data: image.split(",")[1],
+                    mimeType: "image/png",
+                },
+            };
+            const result = await model.generateContent([prompt, imagePart]);
+            const aiResponse = result.response.text();
+            medications = JSON.parse(aiResponse).medications;
+        } catch (aiError) {
+            console.error("Error processing image with Gemini API:", aiError);
+            return res.status(500).json({ success: false, message: "Failed to process image with AI." });
+        }
+
+        // Update user's prescription data
         const updatedUser = await userModel.findByIdAndUpdate(
             userId,
             {
                 $push: {
                     prescriptions: {
                         photoUrl: uploadedImageUrl,
+                        medications,
                     },
                 },
             },
             { new: true }
         );
-
-
-        let aiResponseText;
-        try {
-            const prompt = "Extract the medicines mentioned in this prescription. give medicine names and their dosages. 1-0-1 is morning, afternoon, night. 1-0-0 is morning, night. 0-0-1 is night. 1-1-1 is morning, afternoon, night. give all data in JSON format name, dosage, schedule (morning, afternoon or evening), duration. dont use ```.";
-            const imagePart = {
-                inlineData: {
-                    data: image.split(",")[1], 
-                    mimeType: "image/png",   
-                },
-            };
-            const result = await model.generateContent([prompt, imagePart]);
-            aiResponseText = result.response.text(); 
-            console.log("AI",aiResponseText);
-        } catch (aiError) {
-            console.error("Error processing image with Gemini API:", aiError);
-            return res.status(500).json({ success: false, message: "Failed to process image with AI." });
-        }
 
         if (!updatedUser) {
             return res.status(404).json({
@@ -154,7 +243,7 @@ router.post('/upload', async (req, res) => {
             success: true,
             message: "Prescription uploaded successfully.",
             user: updatedUser,
-            aiResponseText,
+            aiResponseText: medications,
         });
     } catch (error) {
         console.error("Server error:", error);

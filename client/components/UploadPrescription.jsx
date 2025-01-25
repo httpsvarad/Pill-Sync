@@ -52,7 +52,6 @@ const PrescriptionUploader = () => {
                 setStatusMessage("Failed to upload prescription: " + response.data.message);
             }
             console.log(response.data.aiResponseText);
-            const medicineData = response.data.aiResponseText;
         } catch (error) {
             console.error("Error uploading prescription:", error);
             setStatusMessage("An error occurred while uploading the prescription. Please try again.");
@@ -93,7 +92,6 @@ const PrescriptionUploader = () => {
                     </p>
                 )}
             </div>
-
             
         </div>
 
