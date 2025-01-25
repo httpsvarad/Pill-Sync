@@ -2,9 +2,13 @@ import express from 'express';
 import userModel from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import cloudinary from "../cloudinary/cloudinary.config.js"
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 
 const router = express.Router();
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY); 
+const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 router.post('/signup', async (req, res) => {
     try {
@@ -121,6 +125,24 @@ router.post('/upload', async (req, res) => {
             { new: true }
         );
 
+
+        let aiResponseText;
+        try {
+            const prompt = "Extract the medicines and details mentioned in this prescription.";
+            const imagePart = {
+                inlineData: {
+                    data: image.split(",")[1], 
+                    mimeType: "image/png",   
+                },
+            };
+            const result = await model.generateContent([prompt, imagePart]);
+            aiResponseText = result.response.text(); 
+            console.log("AI",aiResponseText);
+        } catch (aiError) {
+            console.error("Error processing image with Gemini API:", aiError);
+            return res.status(500).json({ success: false, message: "Failed to process image with AI." });
+        }
+
         if (!updatedUser) {
             return res.status(404).json({
                 success: false,
@@ -132,6 +154,7 @@ router.post('/upload', async (req, res) => {
             success: true,
             message: "Prescription uploaded successfully.",
             user: updatedUser,
+            aiResponseText,
         });
     } catch (error) {
         console.error("Server error:", error);
@@ -141,6 +164,8 @@ router.post('/upload', async (req, res) => {
         });
     }
 });
+
+
 
 export default router;
 
