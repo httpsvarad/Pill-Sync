@@ -47,7 +47,7 @@ const PrescriptionUploader = () => {
 
             if (response.data.success) {
                 setStatusMessage("Prescription uploaded successfully!");
-               
+
             } else {
                 setStatusMessage("Failed to upload prescription: " + response.data.message);
             }
@@ -60,33 +60,25 @@ const PrescriptionUploader = () => {
         }
     };
 
-    
+
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex flex-col items-center justify-center p-6">
             <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
-                <h2 className="text-2xl font-bold text-gray-700 mb-4 text-center">Upload Prescription</h2>
+                {/* <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Upload Prescription</h2> */}
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
+                    <div className="mb-6">
                         <label
                             htmlFor="image"
-                            className="block text-sm font-medium text-gray-600 mb-2"
+                            className="block text-lg font-medium text-gray-700 mb-3"
                         >
                             Prescription Image:
                         </label>
-                        <input
-                            type="file"
-                            id="image"
-                            accept="image/*"
-                            onChange={handleImageChange}
-                            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
-                            required
-                        />
+                        <input onChange={handleImageChange} type="file" className="file-input w-full" />
                     </div>
                     <button
                         type="submit"
-                        className={`w-full py-2 px-4 rounded-lg text-white font-semibold transition ${isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600"
-                            }`}
+                        className={`w-full py-2 px-3 rounded-lg text-white font-semibold transition-all duration-300 ${isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-blue-500"}`}
                         disabled={isUploading}
                     >
                         {isUploading ? "Uploading..." : "Upload"}
@@ -94,14 +86,14 @@ const PrescriptionUploader = () => {
                 </form>
                 {statusMessage && (
                     <p
-                        className={`mt-4 text-sm text-center ${isUploading ? "text-gray-600" : "text-red-500"
-                            }`}
+                        className={`mt-4 text-sm text-center ${isUploading ? "text-gray-600" : "text-green-500"}`}
                     >
                         {statusMessage}
                     </p>
                 )}
             </div>
         </div>
+
     );
 };
 
