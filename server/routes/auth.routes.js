@@ -128,7 +128,7 @@ router.post('/upload', async (req, res) => {
 
         let aiResponseText;
         try {
-            const prompt = "Extract the medicines and details mentioned in this prescription.";
+            const prompt = "Extract the medicines mentioned in this prescription. give medicine names and their dosages. 1-0-1 is morning, afternoon, night. 1-0-0 is morning, night. 0-0-1 is night. 1-1-1 is morning, afternoon, night. give all data in JSON format name, dosage, schedule (morning, afternoon or evening), duration. dont use ```.";
             const imagePart = {
                 inlineData: {
                     data: image.split(",")[1], 

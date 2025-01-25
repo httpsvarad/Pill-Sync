@@ -51,7 +51,8 @@ const PrescriptionUploader = () => {
             } else {
                 setStatusMessage("Failed to upload prescription: " + response.data.message);
             }
-            console.log("AI: ", response.data.aiResponseText);
+            console.log(response.data.aiResponseText);
+            const medicineData = response.data.aiResponseText;
         } catch (error) {
             console.error("Error uploading prescription:", error);
             setStatusMessage("An error occurred while uploading the prescription. Please try again.");
@@ -64,16 +65,16 @@ const PrescriptionUploader = () => {
 
     return (
         <div className="flex flex-col items-center justify-center p-6">
-            <div className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-md">
+            <div >
                 {/* <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Upload Prescription</h2> */}
                 <form onSubmit={handleSubmit}>
                     <div className="mb-6">
-                        <label
+                        {/* <label
                             htmlFor="image"
                             className="block text-lg font-medium text-gray-700 mb-3"
                         >
                             Prescription Image:
-                        </label>
+                        </label> */}
                         <input onChange={handleImageChange} type="file" className="file-input w-full" />
                     </div>
                     <button
@@ -92,6 +93,8 @@ const PrescriptionUploader = () => {
                     </p>
                 )}
             </div>
+
+            
         </div>
 
     );

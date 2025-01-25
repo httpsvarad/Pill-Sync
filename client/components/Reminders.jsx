@@ -3,8 +3,8 @@ import PrescriptionUploader from "./UploadPrescription";
 
 const MedicineReminderDashboard = () => {
   const [reminders, setReminders] = useState([
-    { id: 1, name: "Take Vitamin C", time: "9:00 AM", active: true },
-    { id: 2, name: "Blood Pressure Medicine", time: "8:00 PM", active: false },
+    { id: 1, name: "Augmentin 625", time: "9:00 AM", active: true },
+    { id: 2, name: "Rovor 10", time: "8:00 PM", active: false },
   ]);
 
   const toggleReminder = (id) => {
@@ -27,10 +27,10 @@ const MedicineReminderDashboard = () => {
 
   return (
     <div className="min-h-screen w-full flex flex-col p-6">
-      {/* <h1 className="text-4xl font-bold mb-6 text-primary">Medicine Reminders</h1> */}
+    
       <div className="overflow-x-auto w-full">
         <table className="table w-full">
-          {/* Table Head */}
+        
           <thead>
             <tr>
               <th>#</th>
@@ -40,7 +40,7 @@ const MedicineReminderDashboard = () => {
               <th>Action</th>
             </tr>
           </thead>
-          {/* Table Body */}
+          
           <tbody>
             {reminders.map((reminder, index) => (
               <tr key={reminder.id} className="hover">
@@ -70,12 +70,12 @@ const MedicineReminderDashboard = () => {
         </table>
       </div>
       
-      {/* You can open the modal using document.getElementById('ID').showModal() method */}
-<button className="btn w-32" onClick={()=>document.getElementById('my_modal_3').showModal()}>Add Reminder</button>
+      
+<button className="btn btn-primary mt-3 w-32" onClick={()=>document.getElementById('my_modal_3').showModal()}>Add Reminder</button>
 <dialog id="my_modal_3" className="modal">
   <div className="modal-box">
     <form method="dialog">
-      {/* if there is a button in form, it will close the modal */}
+     
       <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
     </form>
     <h3 className="font-bold text-lg">Upload Your Prescription</h3>
