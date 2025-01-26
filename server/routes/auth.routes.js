@@ -326,7 +326,7 @@ router.post("/send-reminder", async (req, res) => {
     const client = twilio(accountSid, authToken);
 
     // Fixed data for testing
-    const name = "User";
+    const name = "USER";
     const medications = [
         { name: "Augmentin", dosage: "625mg", schedule: "9:00 AM" },
         { name: "Enzoflam", dosage: "200mg", schedule: "6:00 PM" },
