@@ -1,13 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import useStore from "../store/useStore";
+import { Link } from "react-router-dom";
 
 const PrescriptionUploader = () => {
     const [image, setImage] = useState(null);
     const [statusMessage, setStatusMessage] = useState("");
     const [isUploading, setIsUploading] = useState(false);
 
-    const { user } = useStore();
+    const { user, sendSMS } = useStore();
     const userId = user?._id;
 
     const handleImageChange = (event) => {
@@ -58,6 +59,8 @@ const PrescriptionUploader = () => {
         } finally {
             setIsUploading(false);
         }
+
+        
     };
 
 
@@ -91,8 +94,11 @@ const PrescriptionUploader = () => {
                         {statusMessage}
                     </p>
                 )}
+                {/* <Link to="/editmedicine" className="btn btn-soft btn-accent">
+                    Edit Medication
+                </Link> */}
             </div>
-            
+
         </div>
 
     );

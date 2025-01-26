@@ -30,7 +30,20 @@ const useStore = create((set) => ({
             set({ message: "Invalid Credentials", loading: false });
             throw error;
         }
-    }
+    },
+
+
+    // sendSMS: async (name, medications) => {
+    //     set({ loading: true, message: null });
+    //     try {
+    //         const response = await axios.post(`${BASE_URL}/send-reminder`, { name, medications });
+    //         set({ message: response.data.message, loading: false });
+
+    //     } catch (error) {
+    //         set({ message: "Failed to send SMS", loading: false });
+    //         throw error;
+    //     }
+    // }
 
 
 

@@ -256,6 +256,55 @@ router.post('/upload', async (req, res) => {
 
 
 
+
+
+
+// router.post("/send-reminder", async (req, res) => {
+//     const accountSid = "AC7f09fe2349812bdd54c0813cf2bc9fe1";
+//     const authToken = "f9186f37f58be74f5b6154066d91e4a6";
+//     const client = twilio(accountSid, authToken);
+
+//     const { name, medications } = req.body;
+
+//     if (!name || !medications || !Array.isArray(medications)) {
+//         return res.status(400).json({ message: "Invalid request body." });
+//     }
+
+//     try {
+//         // Iterate through the medications and send a reminder
+//         for (const medication of medications) {
+//             const { name: medName, dosage, schedule } = medication;
+
+//             if (!medName || !schedule) {
+//                 console.log(`Skipping invalid medication: ${JSON.stringify(medication)}`);
+//                 continue;
+//             }
+
+//             const message = `Hi ${name}, it's time to take your medication: ${medName} (${dosage || "as prescribed"}). Scheduled: ${schedule}.`;
+
+//             // Send SMS using Twilio
+//             await client.messages.create({
+//                 from: "+12185357872", 
+//                 to: "+918369636845", 
+//                 body: message,
+//             });
+
+//             console.log(`Reminder sent for ${medName}`);
+//         }
+
+//         res.status(200).json({ message: "Reminders sent successfully." });
+//     } catch (error) {
+//         console.error("Error sending reminders:", error);
+//         res.status(500).json({ message: "Failed to send reminders." });
+//     }
+// });
+
+
+
+
+
+
+
 export default router;
 
 

@@ -4,6 +4,7 @@ import LoginPage from '../pages/LoginPage'
 import SignUpPage from '../pages/SignUpPage'
 import Home from '../pages/Home'
 import Medicines from '../pages/Medicines'
+// import EditMedicine from '../pages/EditMedicine'
 
 
 const App = () => {
@@ -14,6 +15,7 @@ const App = () => {
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<SignUpPage />} />
+        {/* <Route path="/editmedicine" element={<EditMedicine />} /> */}
       
       </Routes>
     </div>
