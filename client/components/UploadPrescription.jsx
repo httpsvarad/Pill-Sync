@@ -11,6 +11,27 @@ const PrescriptionUploader = () => {
     const { user, sendSMS } = useStore();
     const userId = user?._id;
 
+    const sendReminder = async () => {
+        // setLoading(true);
+        // setMessage("");
+
+        // Fixed data for testing
+        // const requestData = {
+        //     name: "John Doe",
+        //     medications: [
+        //         { name: "Paracetamol", dosage: "500mg", schedule: "9:00 AM" },
+        //         { name: "Ibuprofen", dosage: "200mg", schedule: "6:00 PM" }
+        //     ]
+        // };
+
+        try {
+            await sendSMS();
+        } catch (error) {
+            console.error("Error sending reminder:", error);
+            // setMessage("Failed to send reminders.");
+        } 
+    };
+
     const handleImageChange = (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -94,9 +115,7 @@ const PrescriptionUploader = () => {
                         {statusMessage}
                     </p>
                 )}
-                {/* <Link to="/editmedicine" className="btn btn-soft btn-accent">
-                    Edit Medication
-                </Link> */}
+                <button onClick={sendReminder} className="btn mt-4 btn-soft btn-accent">Set Reminder!</button>
             </div>
 
         </div>

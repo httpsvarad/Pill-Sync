@@ -7,6 +7,7 @@ const useStore = create((set) => ({
     user: null,
     message: null,
     loading: false,
+    medicines: [],
 
     signup: async (email, password, name) => {
         set({ loading: true, message: null });
@@ -32,18 +33,30 @@ const useStore = create((set) => ({
         }
     },
 
-
-    // sendSMS: async (name, medications) => {
+    // getMedicines: async (userId) => {
     //     set({ loading: true, message: null });
     //     try {
-    //         const response = await axios.post(`${BASE_URL}/send-reminder`, { name, medications });
-    //         set({ message: response.data.message, loading: false });
-
+    //         const response = await axios.get(`${BASE_URL}/medications/${userId}`);
+    //         set({ medicines: response.data.medications, loading: false });
     //     } catch (error) {
-    //         set({ message: "Failed to send SMS", loading: false });
+    //         set({ message: "Failed to fetch medicines", loading: false });
     //         throw error;
     //     }
-    // }
+    // },
+    
+
+
+    sendSMS: async () => {
+        set({ loading: true, message: null });
+        try {
+            const response = await axios.post(`${BASE_URL}/send-reminder`);
+            set({ loading: false });
+
+        } catch (error) {
+            set({ message: "Failed to send SMS", loading: false });
+            throw error;
+        }
+    }
 
 
 

@@ -3,6 +3,7 @@ import userModel from '../models/user.model.js';
 import bcrypt from 'bcryptjs';
 import cloudinary from "../cloudinary/cloudinary.config.js"
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import twilio from "twilio";
 
 
 const router = express.Router();
@@ -255,13 +256,34 @@ router.post('/upload', async (req, res) => {
 });
 
 
+// router.get('/medications/:userId', async (req, res) => { 
+//     const { userId } = req.params; // Extract userId from route parameters
+
+//     try {
+//         // Find medications based on userId
+//         const user = await userModel.findOne({ _id: userId }, { prescriptions: 1, _id: 0 });
+
+//         if (!user) {
+//             return res.status(404).json({ success: false, message: "User not found!" });
+//         }
+
+//         res.status(200).json({ success: true, medications: user.prescriptions });
+        
+//     } catch (error) {
+//         console.error("Error fetching medications:", error);
+//         res.status(500).json({ success: false, message: "Error, Try Again!" });
+//     }
+// });
+
+
+
+
 
 
 
 
 // router.post("/send-reminder", async (req, res) => {
-//     const accountSid = "AC7f09fe2349812bdd54c0813cf2bc9fe1";
-//     const authToken = "f9186f37f58be74f5b6154066d91e4a6";
+
 //     const client = twilio(accountSid, authToken);
 
 //     const { name, medications } = req.body;
@@ -284,8 +306,7 @@ router.post('/upload', async (req, res) => {
 
 //             // Send SMS using Twilio
 //             await client.messages.create({
-//                 from: "+12185357872", 
-//                 to: "+918369636845", 
+//                  
 //                 body: message,
 //             });
 
@@ -298,6 +319,49 @@ router.post('/upload', async (req, res) => {
 //         res.status(500).json({ message: "Failed to send reminders." });
 //     }
 // });
+
+router.post("/send-reminder", async (req, res) => {
+    const accountSid = process.env.TWILIO_ACCOUNT_SID;
+    const authToken = process.env.TWILIO_AUTH_TOKEN;
+    const client = twilio(accountSid, authToken);
+
+    // Fixed data for testing
+    const name = "User";
+    const medications = [
+        { name: "Augmentin", dosage: "625mg", schedule: "9:00 AM" },
+        { name: "Enzoflam", dosage: "200mg", schedule: "6:00 PM" },
+        { name: "Pan-D", dosage: "200mg", schedule: "9:00 AM" }
+    ];
+
+    try {
+        // Iterate through the medications and send a reminder
+        for (const medication of medications) {
+            const { name: medName, dosage, schedule } = medication;
+
+            if (!medName || !schedule) {
+                console.log(`Skipping invalid medication: ${JSON.stringify(medication)}`);
+                continue;
+            }
+
+            const message = `Hi ${name}, it's time to take your medication: ${medName} (${dosage || "as prescribed"}). Scheduled: ${schedule}.`;
+
+            // Send SMS using Twilio
+            await client.messages.create({
+                from: "+12185357872", // Replace with your Twilio phone number
+                to: "+918369636845", // Replace with a fixed recipient phone number for testing
+                body: message,
+            });
+
+            console.log(`Reminder sent for ${medName}`);
+        }
+
+        res.status(200).json({ message: "Reminders sent successfully." });
+    } catch (error) {
+        console.error("Error sending reminders:", error);
+        res.status(500).json({ message: "Failed to send reminders." });
+    }
+});
+
 
 
 
