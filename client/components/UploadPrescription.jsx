@@ -29,7 +29,7 @@ const PrescriptionUploader = () => {
         } catch (error) {
             console.error("Error sending reminder:", error);
             // setMessage("Failed to send reminders.");
-        } 
+        }
     };
 
     const handleImageChange = (event) => {
@@ -81,7 +81,7 @@ const PrescriptionUploader = () => {
             setIsUploading(false);
         }
 
-        
+
     };
 
 
@@ -91,7 +91,7 @@ const PrescriptionUploader = () => {
             <div >
                 {/* <h2 className="text-3xl font-semibold text-gray-800 mb-6 text-center">Upload Prescription</h2> */}
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-6">
+                    <div className="mb-4">
                         {/* <label
                             htmlFor="image"
                             className="block text-lg font-medium text-gray-700 mb-3"
@@ -102,7 +102,7 @@ const PrescriptionUploader = () => {
                     </div>
                     <button
                         type="submit"
-                        className={`w-full py-2 px-3 rounded-lg text-white font-semibold transition-all duration-300 ${isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-blue-500"}`}
+                        className={`w-full cursor-pointer py-2 px-3 rounded-lg text-white font-semibold transition-all duration-300 ${isUploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 focus:ring-2 focus:ring-blue-500"}`}
                         disabled={isUploading}
                     >
                         {isUploading ? "Uploading..." : "Upload"}
@@ -115,7 +115,7 @@ const PrescriptionUploader = () => {
                         {statusMessage}
                     </p>
                 )}
-                <button onClick={sendReminder} className="btn mt-4 btn-soft btn-accent">Set Reminder!</button>
+                <button onClick={sendReminder} disabled={isUploading} className="btn mt-4 btn-soft btn-accent">Set Reminder!</button>
             </div>
 
         </div>
